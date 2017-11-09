@@ -1,20 +1,30 @@
 package HackerRankTestProject;
 
+import PageObjects.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ValtechHomePageTest {
 
     WebDriver myDriver;
     WebDriverWait wait;
+    HomePage homePage;
+    CareersPage careersPage;
+    AboutPage aboutPage;
+    WorkPage workPage;
+    ServicesPage servicesPage;
 
 
     @Before
@@ -22,6 +32,11 @@ public class ValtechHomePageTest {
         System.setProperty("webdriver.chrome.driver", "src/test/resources/chromedriver.exe");
         myDriver = new ChromeDriver();
         wait = new WebDriverWait(myDriver, 30);
+        homePage = new HomePage(myDriver, wait);
+        careersPage = new CareersPage(myDriver, wait);
+        workPage = new WorkPage(myDriver, wait);
+        aboutPage = new AboutPage(myDriver, wait);
+        servicesPage = new ServicesPage(myDriver, wait);
     }
 
     @After
@@ -30,20 +45,22 @@ public class ValtechHomePageTest {
     }
 
     @Test
-    public void checkLatestNewsTest(){
-        myDriver.navigate().to("http://www.valtech.com");
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".navigation__menu__bg")));
-        Assert.assertTrue(myDriver.findElement(By.cssSelector("div.bloglisting.news-post__listing")).isDisplayed());
+    public void checkValtechPagesTest(){
+        homePage. loadHomePage();
+        Assert.assertTrue(homePage.isLatesNewsDispplayed());
 
-        myDriver.findElement(By.linkText("ABOUT")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("header.page-header h1")));
-        Assert.assertEquals(myDriver.findElement(By.cssSelector("header.page-header h1")).getText(), "About");
-        myDriver.findElement(By.linkText("SERVICES")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("header.page-header h1")));
-        Assert.assertEquals(myDriver.findElement(By.cssSelector("header.page-header h1")).getText(), "Services");
-        myDriver.findElement(By.linkText("WORK")).click();
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("header.page-header h1")));
-        Assert.assertEquals(myDriver.findElement(By.cssSelector("header.page-header h1")).getText(), "Work");
+        aboutPage.openAboutPage();
+        Assert.assertEquals(aboutPage.getPageHeader(), "About");
 
+        servicesPage.openServicesPage();
+        Assert.assertEquals(servicesPage.getPageHeader(), "Services");
+
+        workPage.openWorkPage();
+        Assert.assertEquals(workPage.getPageHeader(), "Work");
+
+        careersPage.openCareersPage();
+        Assert.assertEquals(careersPage.getPageHeader(), "Careers");
+
+        System.out.println("Number of blog listings is : " + careersPage.getNumberOfBlogListing());
     }
 }
